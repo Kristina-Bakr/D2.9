@@ -1,0 +1,164 @@
+>>> from news.models import *    
+
+u1 = User.objects.create_user(username='Kristina') 
+u2 = User.objects.create_user(username='Kate') 
+u3 = User.objects.create_user(username='Ivan')
+
+Author.objects.create(authorUser=u1)
+Author.objects.create(authorUser=u2)
+
+Category.objects.create(name='IT')
+Category.objects.create(name='Games')
+>>> Category.objects.create(name='Cybersport') 
+<Category: Category object (3)>
+>>> Category.objects.create(name='Sport')      
+<Category: Category object (4)>
+
+
+author = Author.objects.get(id=1)
+author
+author2 = Author.objects.get(id=2)
+author2
+
+Post.objects.create(author=author, categoryType='NW', title='sometitle', text='sometext')
+Post.objects.get(id=1).title
+Post.objects.create(author=author2, categoryType='AR', title='Python', text='Hello world!')
+Post.objects.get(id=2).title
+Post.objects.create(author=author, categoryType='AR', title='Football', text='Fifa world cup 2022')
+<Post: Post object (3)>
+>>> Post.objects.get(id=3).title 
+'Football'
+
+Post.objects.get(id=1).postCategory.add(Category.objects.get(id=1))
+Post.objects.get(id=2).postCategory.add(Category.objects.get(id=1))
+Post.objects.get(id=2).postCategory.add(Category.objects.get(id=2))
+Post.objects.get(id=3).postCategory.add(Category.objects.get(id=4)) 
+
+Comment.objects.create(commentPost=Post.objects.get(id=1), commentUser=Author.objects.get(id=1).authorUser, text='greate post')
+Comment.objects.create(commentPost=Post.objects.get(id=2), commentUser=Author.objects.get(id=2).authorUser, text='Easy Python') 
+Comment.objects.create(commentPost=Post.objects.get(id=2), commentUser=Author.objects.get(id=2).authorUser, text='eeaeae')
+Comment.objects.create(commentPost=Post.objects.get(id=3), commentUser=Author.objects.get(id=2).authorUser, text='2022') 
+
+
+
+Comment.objects.get(id=1).like()
+Comment.objects.get(id=1).rating
+Comment.objects.get(id=1).dislike()
+Comment.objects.get(id=1).rating
+
+Comment.objects.get(id=2).like()
+Comment.objects.get(id=2).like()
+Comment.objects.get(id=2).rating 
+
+Comment.objects.get(id=1).dislike()
+Comment.objects.get(id=1).rating
+
+Comment.objects.get(id=3).like()
+>>> Comment.objects.get(id=3).rating 
+1
+
+Author.objects.get(id=1)
+<Author: Author object (1)>
+a = Author.objects.get(id=1)
+a.update_rating()
+>>> a.ratingAuthor
+-1
+
+Post.objects.get(id=1).like()
+>>> Post.objects.get(id=1).rating
+1
+>>> a.ratingAuthor
+-1
+
+Post.objects.get(id=1).like()
+>>> Post.objects.get(id=1).rating
+1
+a.update_rating()
+>>> a.ratingAuthor
+2
+
+Post.objects.get(id=1).like()
+Post.objects.get(id=1).like()
+Post.objects.get(id=2).like()
+Post.objects.get(id=2).like()
+Post.objects.get(id=1).dislike()
+
+a = Author.objects.order_by('-ratingAuthor')[:1]
+
+Author.objects.create(authorUser=u3)
+author3 = Author.objects.get(id=3)
+author3
+
+Comment.objects.create(commentPost=Post.objects.get(id=1), commentUser=User.objects.get(id=3), text='hahah') 
+<Comment: Comment object (3)>
+
+a = Author.objects.order_by('-ratingAuthor')
+a
+<QuerySet [<Author: Author object (1)>, <Author: Author object (2)>, <Author: Author object (3)>]>
+
+>>> for i in a:
+...     i.ratingAuthor
+...     i.authorUser.username
+... 
+2
+'Kristina'
+0
+'Kate'
+0
+'Ivan'
+
+Post.objects.get(id=1).preview()
+Post.objects.get(id=2).preview() 
+
+bestPost = Post.objects.order_by('-rating')[:1]
+bestPost
+<QuerySet [<Post: Post object (1)>]>
+
+>>> for i in bestPost:
+...     i.dateCreation
+...     i.author.authorUser
+...     i.rating
+...     i.title
+...     i.preview()
+... 
+datetime.datetime(2022, 12, 4, 15, 27, 15, 160174, tzinfo=datetime.timezone.utc)
+<User: Kristina>
+2
+'sometitle'
+'sometext...'
+
+bestPostCom = Comment.objects.filter(commentPost=2) 
+bestPostCom
+<QuerySet [<Comment: Comment object (2)>]>
+
+bestPostCom = Comment.objects.filter(commentPost=1) 
+bestPostCom
+<QuerySet [<Comment: Comment object (1)>, <Comment: Comment object (3)>]>
+
+>>> for i in bestPostCom: 
+...     i.dateCreating
+...     i.commentUser
+...     i.rating
+...     i.text
+... 
+datetime.datetime(2022, 12, 4, 15, 31, 28, 123935, tzinfo=datetime.timezone.utc)
+<User: Kristina>
+-1
+'greate post'
+datetime.datetime(2022, 12, 4, 16, 0, 12, 373928, tzinfo=datetime.timezone.utc)
+<User: Ivan>
+0
+'hahah'
+
+
+
+
+
+
+
+
+
+
+
+
+
