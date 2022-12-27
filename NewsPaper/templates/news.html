@@ -32,6 +32,7 @@ Post
         <td>{{ post.title }}</td>
         <td>{{ post.dateCreation|date:'M d Y' }}</td>
         <td>{{ post.text|truncatechars:20 }}</td>
+        <td>{{ post.categoryType }}</td>
     </tr>
     {% endfor %}
 </table>

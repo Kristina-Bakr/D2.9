@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post
 from .filters import PostFilter
@@ -30,20 +31,23 @@ class PostDetail(DetailView):
     context_object_name = 'post'
 
 
-class PostCreate(CreateView):
+class PostCreate(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_post',)
     # Указываем нашу разработанную форму
     form_class = PostForm
     # модель товаров
     model = Post
     # и новый шаблон, в котором используется форма.
     template_name = 'post_edit.html'
+
     def form_valid(self, form):
         Post = form.save(commit=True)
         Post.categoryType = 'NW'
         return super().form_valid(form)
 
 
-class PostUpdate(UpdateView):
+class PostUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post',)
     # Указываем нашу разработанную форму
     form_class = PostForm
     # модель товаров
@@ -58,17 +62,20 @@ class PostDelete(DeleteView):
     success_url = reverse_lazy('post_list')
 
 
-class PostCreateArticles(CreateView):
+class PostCreateArticles(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_post',)
     form_class = PostForm
     model = Post
     template_name = 'articles_edit.html'
+
     def form_valid(self, form):
         Post = form.save(commit=True)
-        Post.categoryType ='AR'
+        Post.categoryType = 'AR'
         return super().form_valid(form)
 
 
-class PostEditArticles(UpdateView):
+class PostUpdateArticles(PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post',)
     form_class = PostForm
     model = Post
     template_name = 'articles_edit.html'

@@ -19,6 +19,7 @@ Post
         <td>{{ post.title|censor }}</td>
         <td>{{ post.dateCreation|date:'M d Y' }}</td>
         <td>{{ post.text|censor  }}</td>
+        <td>{{ post.categoryType }}</td>
     </tr>
 </table>
 {% else %}
