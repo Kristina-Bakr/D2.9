@@ -1,28 +1,20 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post
+from .models import Post, Category
 from .filters import PostFilter
 from .forms import PostForm
 from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth.decorators import login_required
 
 
-class PostList(ListView):
+class PostList(LoginRequiredMixin, ListView):
     model = Post
     ordering = 'text'
     context_object_name = 'posts'
     template_name = 'news.html'
     queryset = Post.objects.order_by('-dateCreation')
     paginate_by = 3
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        self.filterset = PostFilter(self.request.GET, queryset)
-        return self.filterset.qs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['filterset'] = self.filterset
-        return context
 
 
 class PostDetail(DetailView):
@@ -62,26 +54,41 @@ class PostDelete(DeleteView):
     success_url = reverse_lazy('post_list')
 
 
-class PostCreateArticles(PermissionRequiredMixin, CreateView):
-    permission_required = ('news.add_post',)
-    form_class = PostForm
+class PostSearch(ListView):
     model = Post
-    template_name = 'articles_edit.html'
+    template_name = 'post_search.html'
+    queryset = Post.objects.order_by('-dateCreation')
+    context_object_name = 'post'
+    paginate_by = 3
 
-    def form_valid(self, form):
-        Post = form.save(commit=True)
-        Post.categoryType = 'AR'
-        return super().form_valid(form)
+    def get_filter(self):
+        return PostFilter(self.request.GET, queryset=super().get_queryset())
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = PostFilter(self.request.GET, queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filterset'] = self.filterset
+        return context
 
 
-class PostUpdateArticles(PermissionRequiredMixin, UpdateView):
-    permission_required = ('news.change_post',)
-    form_class = PostForm
-    model = Post
-    template_name = 'articles_edit.html'
+class CategoryList(ListView):
+    model = Category
+    ordering = 'name'
+    template_name = 'news/category_list.html'
+    context_object_name = 'Сategory'
 
 
-class PostDeleteArticles(DeleteView):
-    model = Post
-    template_name = 'articles_delete.html'
-    success_url = reverse_lazy('post_list')
+@login_required
+def add_subscribe(request, pk):
+    Category.objects.get(id=pk).subscribers.add(request.user)
+    return redirect('/news/')
+
+
+@login_required
+def del_subscribe(request, pk):
+    Category.objects.get(id=pk).subscribers.remove(request.user)
+    return redirect('/news/')

@@ -1,7 +1,6 @@
 {% extends 'flatpages/default.html' %}
 
 {% load custom_filters %}
-
 {% load custom_tags %}
 
 {% block title %}
@@ -9,53 +8,56 @@ Post
 {% endblock title %}
 
 {% block content %}
-<h1> Все новости </h1>
+</html>
+   <h1>Все посты</h1>
+   <hr>
+    {% if posts %}
+    <table>
+        <thead>
+            <th>
+                 Название
+            </th>
+            <th>
+                 Дата публикации
+            </th>
+            <th>
+                 Описание
+            </th>
+             <th>
+                 Категория
+             </th>
+            </tr>
+        </thead>
 
- <form action="" method="get">
-     {{ filterset.form.as_p }}
-     <input type="submit" value="Найти" />
-   </form>
-
-
-<h3>{{ time_now|date:'M d Y' }}</h3>
-
-
-{% if posts %}
-<table>
-    <tr>
-        <td>Название</td>
-        <td>Дата публикации</td>
-        <td>Описание</td>
-    </tr>
-    {% for post in posts %}
-    <tr>
-        <td>{{ post.title }}</td>
-        <td>{{ post.dateCreation|date:'M d Y' }}</td>
-        <td>{{ post.text|truncatechars:20 }}</td>
-        <td>{{ post.categoryType }}</td>
-    </tr>
-    {% endfor %}
-</table>
-{% else %}
+            {% for post in posts %}
+            <tr>
+            <td>{{ post.title }}</td>
+            <td>{{ post.dateCreation|date:'M d Y' }}</td>
+            <td>{{ post.text|truncatechars:20 }}</td>
+            <td>{{ post.categoryType }}</td>
+             </tr>
+        {% endfor %}
+    </table>
+    {% else %}
         <h2>Новостей нет!</h2>
-{% endif %}
+    {% endif %}
 
-{% if page_obj.has_previous %}
+    {% if page_obj.has_previous %}
        <a href="?{% url_replace page=1 %}">1</a>
        {% if page_obj.previous_page_number != 1 %}
            ...
            <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
        {% endif %}
-   {% endif %}
+    {% endif %}
 
-   {{ page_obj.number }}
+    {{ page_obj.number }}
 
-   {% if page_obj.has_next %}
+    {% if page_obj.has_next %}
        <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
        {% if paginator.num_pages != page_obj.next_page_number %}
            ...
            <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
        {% endif %}
-   {% endif %}
+    {% endif %}
 
 {% endblock content %}

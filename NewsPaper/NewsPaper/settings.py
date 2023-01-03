@@ -39,14 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    'news',
+    'news.apps.NewsConfig',
     'django_filters',
 
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
+    'django_apscheduler',
 ]
+
 
 SITE_ID = 1
 
@@ -80,13 +82,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'NewsPaper.wsgi.application'
-
-
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 
 # Database
@@ -150,4 +145,26 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-LOGIN_REDIRECT_URL = "/news"
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/news'
+SITE_URL = 'http://127.0.0.1:8000'
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+
+DEFAULT_FROM_EMAIL = os.getenv('DEFF_EMAIL')
+
+EMAIL_HOST = 'smtp.yandex.ru'  # адрес сервера Яндекс-почты для всех один и тот же
+EMAIL_PORT = 465  # порт smtp сервера тоже одинаковый
+EMAIL_HOST_USER = os.getenv('HOST_EMAIL')
+EMAIL_HOST_PASSWORD = os.getenv('PASS_KEY')
+EMAIL_USE_SSL = True
+
+SERVER_EMAIL = os.getenv('DEFF_EMAIL')
+
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+APSCHEDULER_RUN_NOW_TIMEOUT = 25

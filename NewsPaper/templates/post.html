@@ -7,22 +7,26 @@ Post
 {% endblock title %}
 
 {% block content %}
- <h1>Новость {{ post.pk }}</h1>
-{% if post.pk %}
-<table>
-    <tr>
-        <td>Название</td>
-        <td>Дата публикации</td>
-        <td>Описание</td>
-    </tr>
-    <tr>
-        <td>{{ post.title|censor }}</td>
-        <td>{{ post.dateCreation|date:'M d Y' }}</td>
-        <td>{{ post.text|censor  }}</td>
-        <td>{{ post.categoryType }}</td>
-    </tr>
-</table>
-{% else %}
-<h2>Новостей нет!</h2>
-{% endif %}
+    <h3>{{ time_now|date:'M d Y' }}</h3>
+   <hr>
+    {% if post %}
+        <table>
+               <td><h2> {{ post.title }} </h2></td>
+               <td><h2>{{ post.text|censor }}</h2></td>
+           <tr>
+               <td><h2>{{ post.dateCreation|date:' (d M Y)' }}</h2></td>
+               <td>{{ post.categoryType }}</td>
+           </tr>
+
+       </table>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Подписаться">
+</form>
+
+    {% else %}
+        <h2>Новостей нет!</h2>
+    {% endif %}
 {% endblock content %}

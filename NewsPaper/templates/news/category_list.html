@@ -1,0 +1,27 @@
+{% extends 'flatpages/default.html' %}
+
+
+{% block title %}
+Category
+{% endblock title %}
+
+{% block content %}
+
+<table>
+    <thead>
+        <th>
+            Категории
+        </th>
+    </thead>
+    {% for Category in Сategory %}
+    <tr>
+       <td>
+            <h4>{{ Category }}</h4>
+            <a href="{% url 'add_subscribe' Category.id %}">Подписаться</a>
+            <a href="{% url 'del_subscribe' Category.id %}">Отписаться</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock content %}
