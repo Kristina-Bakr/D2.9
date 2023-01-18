@@ -6,6 +6,7 @@ from .forms import PostForm
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
+from .tasks import send_new_mail
 
 
 class PostList(LoginRequiredMixin, ListView):
@@ -35,6 +36,7 @@ class PostCreate(PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         Post = form.save(commit=True)
         Post.categoryType = 'NW'
+        send_new_mail.delay()
         return super().form_valid(form)
 
 
@@ -85,7 +87,8 @@ class CategoryList(ListView):
 @login_required
 def add_subscribe(request, pk):
     Category.objects.get(id=pk).subscribers.add(request.user)
-    return redirect('/news/')
+    message = 'Вы успешно подписались '
+    return redirect((request, 'sub.html', {'category': Category.objects.get(id=pk), 'message': message}))
 
 
 @login_required
